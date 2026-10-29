@@ -7,6 +7,20 @@
 
 저항점용접(RSW) 공정데이터 분석. 제6회 K-인공지능 제조데이터 분석 경진대회 제출물.
 
+> [!NOTE]
+> 이 저장소는 팀 프로젝트 [`dlwogud/kamp-welding`](https://github.com/dlwogud/kamp-welding)을 기반으로 한
+> **`@minster0422`의 제조 AI 포트폴리오 확장본**이다. 대회 당시 공동 결과와 포크 이후 개인 개선을
+> 구분해 기록한다. 원본 분석 결과를 개인 단독 성과로 주장하지 않는다.
+
+**빠르게 보기:** [3분 프로젝트 카드](PROJECT_CARD.md) · [개인 기여 범위](docs/MY_CONTRIBUTION.md) · [실행 방법](docs/RUNNING.md)
+
+### 이 포크에서 추가하는 것
+
+- 평가기준을 누수·통계·현장 적용·재현성의 검증 질문으로 바꾼 의사결정 과정 공개
+- 합성 이상, 실제 운전, 실제 불량, 외부 실제라벨을 구분한 증거 수준 설명
+- 원본 데이터 없이도 소스 구문, P0/P1 안전장치, 문서 링크를 검사하는 경량 품질 게이트
+- 채용·대학원 면접에서 3분 안에 문제 정의와 기여 범위를 설명할 수 있는 프로젝트 카드
+
 <details>
 <summary><b>In English</b> — resistance spot welding, process anomaly detection under label-resolution mismatch</summary>
 
