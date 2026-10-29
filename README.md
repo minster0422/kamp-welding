@@ -1,4 +1,10 @@
-# 로봇용접 공정이상 탐지 — 라벨 해상도가 맞지 않는 데이터에서
+# WeldProof
+
+## 라벨 해상도 불일치 환경에서 누수 없이 검증하는 로봇용접 제조 AI
+
+[![Portfolio quality gate](https://github.com/minster0422/kamp-welding/actions/workflows/portfolio-quality.yml/badge.svg)](https://github.com/minster0422/kamp-welding/actions/workflows/portfolio-quality.yml)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+![GPU not required](https://img.shields.io/badge/GPU-not%20required-2E8B57)
 
 > 설명변수는 **용접점 11,939개**인데 정답 라벨은 **작업일 집계 39건**이었다.
 > 이 불일치를 무시하면 용접점 단위 성능이 구조적으로 과대평가된다.
@@ -12,7 +18,42 @@
 > **`@minster0422`의 제조 AI 포트폴리오 확장본**이다. 대회 당시 공동 결과와 포크 이후 개인 개선을
 > 구분해 기록한다. 원본 분석 결과를 개인 단독 성과로 주장하지 않는다.
 
-**빠르게 보기:** [3분 프로젝트 카드](PROJECT_CARD.md) · [개인 기여 범위](docs/MY_CONTRIBUTION.md) · [실행 방법](docs/RUNNING.md)
+**읽는 시간에 따라 선택:** [30초 요약](#30초-요약) · [3분 프로젝트 카드](PROJECT_CARD.md) · [면접 질문과 답변](docs/INTERVIEW_GUIDE.md) · [전체 기술보고서](report/결과보고서_본문.md)
+
+## 30초 요약
+
+| 질문 | 답변 |
+|---|---|
+| 해결하려던 문제 | 최종 품질검사 전에 로봇용접의 불량위험과 공정이상을 파악할 수 있는가? |
+| 가장 큰 제약 | 공정변수는 용접점 11,939행인데 불량 라벨은 8개 작업일의 집계 39건이며, 두 단위를 연결할 키가 없음 |
+| 핵심 판단 | 작업일 라벨을 모든 용접점에 복제하면 누수가 발생하므로 작업일 예측과 용접점 이상탐지를 분리해야 함 |
+| 최종 설계 | 작업일 불량건수 예측 + 제조 물리 기반 용접점 이상탐지 + 정상운전 관계 + 일 단위 관리도 |
+| 대표 결과 | 합성 7유형 평균/최악 AUC 0.971/0.954, 외부 실제라벨 AUC 0.899, 공정 이동 3/3·안정일 오경보 0/5 |
+| 해석 한계 | 0.971은 합성 고장모드 민감도이고 3/3은 공정 이동 탐지다. 둘 다 실제 용접불량 탐지율이 아님 |
+
+```mermaid
+flowchart LR
+    A[용접점 공정데이터<br/>11,939행] --> B{용접점별<br/>검사라벨 존재?}
+    B -- 없음 --> C[작업일 라벨 전가 시<br/>누수·의사반복 위험]
+    C --> D[문제 분리]
+    D --> E[작업일 불량건수<br/>LOO-CV]
+    D --> F[용접점 공정이상<br/>LODO + Nested CV]
+    D --> G[가압력→전류<br/>정상운전 관계]
+    F --> H[재검사 우선순위]
+    G --> I[일 단위 관리도]
+```
+
+## 내가 맡은 문제
+
+팀 전체의 모델링 결과와 개인 기여를 구분한다. `@minster0422`는 제출 마감 단계에서 평가기준을 검증 질문으로 바꾸고, 누수·통계 산식·컨포멀 표현·산출물 진위·보고서 과대해석을 교차 점검했다. 포크 이후에는 이 과정을 포트폴리오 문서와 자동 품질 게이트로 재구성했다.
+
+- **검증 설계:** 행 무작위 분할과 작업일 그룹 분할의 차이를 핵심 위험으로 정리
+- **P0/P1 감사:** 매니페스트 실패조건, Monte Carlo p값, 컨포멀·Jackknife+ 표현 확인
+- **주장 보정:** 합성 이상과 실제 불량 성능, 공정 이동과 불량 발생을 분리
+- **재현성:** 핵심 수치의 출처 CSV와 안전장치를 원본 데이터 없이 다시 검사
+- **커뮤니케이션:** 장문 보고서를 심사자·채용담당자·면접관의 읽기 순서로 재구성
+
+세부 범위는 [개인 기여 문서](docs/MY_CONTRIBUTION.md), 판단이 바뀐 이유는 [의사결정 기록](docs/DECISION_LOG.md), 대표 수치의 출처는 [Evidence Map](docs/EVIDENCE_MAP.md)에서 확인할 수 있다.
 
 ### 이 포크에서 추가하는 것
 
@@ -20,6 +61,8 @@
 - 합성 이상, 실제 운전, 실제 불량, 외부 실제라벨을 구분한 증거 수준 설명
 - 원본 데이터 없이도 소스 구문, P0/P1 안전장치, 문서 링크를 검사하는 경량 품질 게이트
 - 채용·대학원 면접에서 3분 안에 문제 정의와 기여 범위를 설명할 수 있는 프로젝트 카드
+- 대표 수치를 원본 CSV에서 다시 계산해 README 주장과 대조하는 evidence checker
+- 예상 질문에 대해 30초 답변과 기술적 근거를 분리한 면접 가이드
 
 <details>
 <summary><b>In English</b> — resistance spot welding, process anomaly detection under label-resolution mismatch</summary>
