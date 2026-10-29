@@ -63,7 +63,16 @@ def check_guardrails(errors: list[str]) -> None:
 def check_local_markdown_links(errors: list[str]) -> int:
     link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
     checked = 0
-    for path in [ROOT / "README.md", ROOT / "PROJECT_CARD.md", ROOT / "docs" / "MY_CONTRIBUTION.md"]:
+    portfolio_docs = [
+        ROOT / "README.md",
+        ROOT / "PROJECT_CARD.md",
+        ROOT / "docs" / "MY_CONTRIBUTION.md",
+        ROOT / "docs" / "DECISION_LOG.md",
+        ROOT / "docs" / "EVIDENCE_MAP.md",
+        ROOT / "docs" / "INTERVIEW_GUIDE.md",
+        ROOT / "docs" / "AI_ASSISTED_REVIEW.md",
+    ]
+    for path in portfolio_docs:
         if not path.exists():
             fail(f"Missing portfolio document: {path.relative_to(ROOT)}", errors)
             continue

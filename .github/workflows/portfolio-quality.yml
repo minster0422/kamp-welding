@@ -20,4 +20,6 @@ jobs:
           python-version: "3.11"
 
       - name: Validate portfolio repository
-        run: python tools/portfolio_quality_gate.py
+        run: |
+          python tools/portfolio_quality_gate.py
+          python tools/check_evidence.py
